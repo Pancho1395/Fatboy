@@ -5,9 +5,9 @@ class Bomberman
 public:
     Bomberman(sf::Vector2f position, sf::Color color)
     {
-        shape.setSize(sf::Vector2f(0, 0));
+        shape.setSize(sf::Vector2f(18, 30));
         shape.setPosition(position); // Posición inicial cuadro
-        shape.setFillColor(color);
+        shape.setFillColor(sf::Color(color.r, color.g, color.b, 0));
 
         // Cargar la imagen desde un archivo
         
@@ -27,6 +27,7 @@ public:
 
     void draw(sf::RenderWindow &window)
     {
+        this->sprite.setScale(3, 3); // Escala la imagen al 50%
         window.draw(this->shape);
         window.draw(this->sprite);
     }

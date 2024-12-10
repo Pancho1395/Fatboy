@@ -1,13 +1,18 @@
 #include <SFML/Graphics.hpp>
-#include<Bomberman.hpp>
-double velocidad = 0.05;
+#include <Bomberman.hpp>
+#include <Mapa.hpp>
+#include <Bloque.hpp>
+double velocidad = 0.1;
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(800, 600), "DinoChrome");
+    
+    sf::RenderWindow window(sf::VideoMode(1084, 828), "Fatboy");
 
-    Bomberman man1(sf::Vector2f(400, 300), sf::Color::Red);
-
+    Bomberman man1(sf::Vector2f(128, 40), sf::Color::Red);
+    Mapa map(sf::Vector2f(0,0));
+    map.genMatriz();
+    map.generarBloques(); // Generar los bloques basados en la matriz
     while (window.isOpen())
     {
         sf::Event event;
@@ -18,7 +23,6 @@ int main()
                 window.close();
             }
         }
-
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
         {
             man1.left();
@@ -26,7 +30,7 @@ int main()
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
         {
-            // Actualizar animacion man1chu
+            // Actualizar animacion man1
             man1.right();
             man1.move(velocidad, 0);
         }
@@ -42,8 +46,8 @@ int main()
         }else
             man1.stayd();
 
-        
         window.clear();
+        map.draw(window);
         man1.draw(window);
         window.display();
     }
