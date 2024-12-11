@@ -1,7 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <Bomberman.hpp>
 #include <Mapa.hpp>
-#include <Bloque.hpp>
 double velocidad = 0.1;
 
 int main()
@@ -23,28 +22,37 @@ int main()
                 window.close();
             }
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-        {
-            man1.left();
-            man1.move(velocidad * -1, 0);
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-        {
-            // Actualizar animacion man1
-            man1.right();
-            man1.move(velocidad, 0);
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-        {
-            man1.up();
-            man1.move(0, velocidad * -1);
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-        {
-            man1.down();
-            man1.move(0, velocidad);
-        }else
-            man1.stayd();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+    man1.left();
+    man1.move(-velocidad, 0);
+    if (man1.checkBlockCollision(map.getmatriz(), filas, columnas)) {
+        man1.move(velocidad, 0); // Revertir el movimiento si hay colisión
+        man1.stayd();
+    }
+} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+    man1.right();
+    man1.move(velocidad, 0);
+    if (man1.checkBlockCollision(map.getmatriz(), filas, columnas)) {
+        man1.move(-velocidad, 0); // Revertir el movimiento si hay colisión
+        man1.stayd();
+    }
+} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+    man1.up();
+    man1.move(0, -velocidad);
+    if (man1.checkBlockCollision(map.getmatriz(), filas, columnas)) {
+        man1.move(0, velocidad); // Revertir el movimiento si hay colisión
+        man1.stayd();
+    }
+} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+    man1.down();
+    man1.move(0, velocidad);
+    if (man1.checkBlockCollision(map.getmatriz(), filas, columnas)) {
+        man1.move(0, -velocidad); // Revertir el movimiento si hay colisión
+        man1.stayd();
+    }
+} else {
+    man1.stayd();
+}
 
         window.clear();
         map.draw(window);
@@ -52,5 +60,5 @@ int main()
         window.display();
     }
 
-    return 0;
+return 0;
 }

@@ -77,7 +77,31 @@ public:
             clock.restart();
         }
     }
+bool checkBlockCollision(int** matriz, int filas, int columnas) {
+    // Posición de la mitad inferior del sprite
+    sf::Vector2f position = sprite.getPosition();
+    float x_centro = position.x + sprite.getGlobalBounds().width / 2; // Mitad del ancho
+    float y_abajo = position.y + sprite.getGlobalBounds().height;     // Borde inferior
 
+    // Recorrer la matriz para verificar bloques en las posiciones (x, y)
+    for (int i = 0; i < filas; i++) {
+        for (int j = 0; j < columnas; j++) {
+            float bloqueX = 128 + i * 64; // Calcular posición X del bloque
+            float bloqueY = 64 + j * 64;  // Calcular posición Y del bloque
+
+            // Comparar la posición con la del sprite (centro-abajo)
+            if (x_centro >= bloqueX && x_centro < bloqueX + 64 &&
+                y_abajo >= bloqueY && y_abajo < bloqueY + 64) {
+                // Si encuentra un bloque en la matriz
+                if (matriz[i][j] == 1 || matriz[i][j] == 3) {
+                    return true; // Colisión con bloque sólido o destruible
+                }
+            }
+        }
+    }
+
+    return false; // No hay colisión
+}
 private:
     sf::RectangleShape shape;
     sf::Sprite sprite;
@@ -87,5 +111,5 @@ private:
     int currentFrame = 0;
     int numFrames = 4; // Número total de frames en la animación
     int frameWidth = 32;
-    int frameHeight = 32;
+    int frameHeight=32;
 };

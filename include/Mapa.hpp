@@ -41,17 +41,22 @@ void draw(sf::RenderWindow &window)
         }
     }
     void genMatriz() {
-        srand(time(NULL));
-        for (int i = 0; i < filas; i++) {
-            for (int j = 0; j < columnas; j++) {
-                if (i % 2 == 1 && j % 2 == 1) {
-                    matriz[i][j] = 1; // Bloques sólidos
-                } else {
-                    matriz[i][j] = (rand() % 2) ? 3 : 0; // Aleatoriamente crea un bloque destruible (3) o espacio vacío (0)
-                }
+    srand(time(NULL));
+    for (int i = 0; i < filas; i++) {
+        for (int j = 0; j < columnas; j++) {
+            // Evitar generar bloques en las posiciones (0,0), (0,1) y (1,0)
+            if ((i == 0 && j == 0) || (i == 0 && j == 1) || (i == 1 && j == 0)) {
+                matriz[i][j] = 0; // Espacio vacío
+            } 
+            else if (i % 2 == 1 && j % 2 == 1) {
+                matriz[i][j] = 1; // Bloques sólidos
+            } 
+            else {
+                matriz[i][j] = (rand() % 2) ? 3 : 0; // Aleatoriamente crea un bloque destruible (3) o espacio vacío (0)
             }
         }
     }
+}
 
 int **getmatriz(){
     return matriz;
@@ -63,5 +68,5 @@ private:
     sf::Texture texture;
     sf::Clock clock;
     int **matriz;
-    std::vector<Bloque> bloques; // Vector para almacenar los bloques generados
+    std::vector<Bloque> bloques; // Vector para almacenar los bloques generados
 };

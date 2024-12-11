@@ -31,4 +31,4 @@ public:
 private:
     sf::Sprite sprite;
 };
-#endif // BLOQUE_HPP
+#endif // BLOQUE_HPPs
