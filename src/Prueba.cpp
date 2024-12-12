@@ -7,8 +7,7 @@
 
 double velocidad = 0.1;
 
-int main()
-{
+int main() {
     float left = 128.0f;
     float top = 64.0f;
     float right = 960.0f;
@@ -16,38 +15,31 @@ int main()
     sf::RenderWindow window(sf::VideoMode(1084, 828), "Fatboy");
 
     Bomberman man1(sf::Vector2f(128, 40), sf::Color::Red);
-    Mapa map(sf::Vector2f(0,0));
+    Mapa map(sf::Vector2f(0, 0));
     map.genMatriz();
-    map.generarBloques(); // Generar los bloques basados en la matriz
+    map.generarBloques();
 
-    std::vector<Bomba> bombs; // Vector para almacenar las bombas
+    std::vector<Bomba> bombs;
     sf::Music music;
-    if (!music.openFromFile("./assets/music/Super Bomberman - World 1 (SNES OST).OGG"))
-    {
-        // Error al cargar el archivo de música
+    if (!music.openFromFile("./assets/music/Super Bomberman - World 1 (SNES OST).OGG")) {
         return -1;
     }
 
-    // Reproducir la música
     music.play();
 
-    while (window.isOpen())
-    {
+    while (window.isOpen()) {
         sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-            {
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
                 window.close();
             }
 
-            // Colocar una bomba al presionar la barra espaciadora
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
                 man1.placeBomb(bombs);
             }
         }
 
-        // Movimiento del personaje
+        // Movimiento con colisiones
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
             man1.left();
             man1.move(-velocidad, 0);
@@ -82,7 +74,7 @@ int main()
 
         // Actualizar el estado de las bombas
         for (auto &bomb : bombs) {
-            bomb.update();
+            bomb.update(map); // Pasar el mapa para verificar y eliminar bloques
         }
 
         // Limpiar y dibujar en la ventana
@@ -99,3 +91,4 @@ int main()
 
     return 0;
 }
+
