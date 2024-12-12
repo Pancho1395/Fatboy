@@ -7,22 +7,34 @@
 
 class Bomba {
 public:
-    Bomba(sf::Vector2f position)
-    {
-        // Configurar el sprite de la bomba
-        if (!texture.loadFromFile("assets/images/bomba.png")) {
-            std::cerr << "Error: No se pudo cargar la textura de la bomba" << std::endl;
-        }
-        sprite.setTexture(texture);
-        sprite.setPosition(position);
-        sprite.setScale(3, 3); // Ajustar el tamaño de la bomba
+    Bomba(sf::Vector2f position) {
+    // Configurar el sprite de la bomba
+    if (!texture.loadFromFile("assets/images/Bomba sprite.png")) {
+        std::cerr << "Error: No se pudo cargar la textura de la bomba" << std::endl;
+    }
+    sprite.setTexture(texture);
+    sprite.setPosition(position);
+    sprite.setScale(2, 2); // Ajustar el tamaño de la bomba
 
-        explosionTimer.restart(); // Iniciar el temporizador
-        exploded = false;
-        explosionFinished = false;
-        explosionDuration = 1.0f; // Duración de la explosión en segundos
+    // Cargar la textura de la explosión
+    if (!explosionTexture.loadFromFile("assets/images/explosion.png")) {
+        std::cerr << "Error: No se pudo cargar la textura de la explosión" << std::endl;
     }
 
+    explosionTimer.restart(); // Iniciar el temporizador
+    exploded = false;
+    explosionFinished = false;
+    explosionDuration = 1.0f; // Duración de la explosión en segundos
+}
+    void anima(){
+        // Actualizar el frame de la animación
+        if (clock.getElapsedTime().asSeconds() >= frameTime)
+        {
+            currentFrame = (currentFrame + 1) % 3;
+            sprite.setTextureRect(sf::IntRect(currentFrame * 32, 0, 32, 32));
+            clock.restart();
+        }
+    }
     void update() {
         // Verificar si la bomba debe explotar
         if (explosionTimer.getElapsedTime().asSeconds() >= 3.0f && !exploded) {
@@ -39,16 +51,16 @@ public:
     }
 
     void draw(sf::RenderWindow &window) {
-        if (!exploded) {
-            window.draw(sprite);
-        } else if (!explosionFinished) {
-            // Dibujar las explosiones
-            for (auto &explosion : explosions) {
-                window.draw(explosion);
-            }
+    if (!exploded) {
+        anima(); // Actualizar la animación de la bomba
+        window.draw(sprite);
+    } else if (!explosionFinished) {
+        // Dibujar las explosiones
+        for (auto &explosion : explosions) {
+            window.draw(explosion);
         }
     }
-
+    }
     bool hasExploded() const {
         return exploded;
     }
@@ -58,6 +70,7 @@ public:
     }
 
 private:
+
     void generateExplosion() {
         // Generar explosiones en las 4 direcciones
         sf::Vector2f size(64, 64);
@@ -75,10 +88,15 @@ private:
         }
     }
 
+
     sf::Sprite sprite;
     sf::Texture texture;
     sf::Clock explosionTimer;
     sf::Time explosionStartTime;
+    sf::Clock clock;
+    sf::Texture explosionTexture; // Asegúrate de que la textura persista
+    int currentFrame = 0;
+    float frameTime = 0.1f; // Tiempo entre cuadros
     float explosionDuration;
     bool exploded;
     bool explosionFinished;

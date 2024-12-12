@@ -52,35 +52,66 @@ public:
         return sprite.getPosition();
     }
 
-    bool checkBlockCollision(int** matriz, int filas, int columnas)
-    {
-        sf::Vector2f position = sprite.getPosition();
-        float x_centro = position.x + sprite.getGlobalBounds().width / 2;
-        float y_abajo = position.y + sprite.getGlobalBounds().height;
+    bool checkBlockCollision(int** matriz, int filas, int columnas, float left, float top, float right, float bottom) {
+    // Posición de la mitad inferior del sprite
+    sf::Vector2f position = sprite.getPosition();
+    float x_centro = position.x + sprite.getGlobalBounds().width / 2; // Mitad del ancho
+    float y_abajo = position.y + sprite.getGlobalBounds().height;     // Borde inferior
 
-        for (int i = 0; i < filas; ++i) {
-            for (int j = 0; j < columnas; ++j) {
-                float bloqueX = 128 + i * 64; // Calcular posición del bloque
-                float bloqueY = 64 + j * 64;
+    // Verificar colisiones con los bordes del mapa considerando los ajustes
+    if (x_centro < left + 18 || x_centro > right - 18 || y_abajo < top + 20 || y_abajo > bottom) {
+        return true; // Colisión con el borde del mapa
+    }
 
-                if (x_centro >= bloqueX && x_centro < bloqueX + 64 &&
-                    y_abajo >= bloqueY && y_abajo < bloqueY + 64) {
-                    if (matriz[i][j] == 1 || matriz[i][j] == 3) {
-                        return true; // Colisión detectada
-                    }
+    // Recorrer la matriz para verificar bloques en las posiciones (x, y)
+    for (int i = 0; i < filas; i++) {
+        for (int j = 0; j < columnas; j++) {
+            float bloqueX = 128 + i * 64; // Calcular posición X del bloque
+            float bloqueY = 64 + j * 64;  // Calcular posición Y del bloque
+
+            // Comparar la posición con la del sprite (ajustando 36 píxeles en los lados)
+            if (x_centro >= bloqueX - 24 && x_centro < bloqueX + 64 + 24 &&
+                y_abajo >= bloqueY && y_abajo < bloqueY + 64) {
+                // Si encuentra un bloque en la matriz
+                if (matriz[i][j] == 1 || matriz[i][j] == 3) {
+                    return true; // Colisión con bloque sólido o destruible
                 }
             }
         }
-        return false; // No hay colisión
     }
 
+    return false; // No hay colisión
+}
     // Métodos para actualizar la animación y movimiento
     void right() { updateAnimation(248, 6); }
     void left() { updateAnimation(132, 6); }
-    void up() { updateAnimation(366, 6); }
-    void down() { updateAnimation(3, 6); }
-    void stayd() { updateAnimation(3, 3, 14); }
-
+    void up(){
+        // Actualizar el frame de la animación
+        if (clock.getElapsedTime().asSeconds() >= frameTime)
+        {
+            currentFrame = (currentFrame + 1) % 6;
+            sprite.setTextureRect(sf::IntRect((currentFrame * 21)+366, 60, 18, 30));
+            clock.restart();
+        }
+    }
+    void down(){
+        // Actualizar el frame de la animación
+        if (clock.getElapsedTime().asSeconds() >= frameTime)
+        {
+            currentFrame = (currentFrame + 1) % 6;
+            sprite.setTextureRect(sf::IntRect((currentFrame * 21)+3, 60, 18, 30));
+            clock.restart();
+        }
+    }
+     void stayd(){
+        // Actualizar el frame de la animación
+        if (clock.getElapsedTime().asSeconds() >= frameTime)
+        {
+            currentFrame = (currentFrame + 1) % 3;
+            sprite.setTextureRect(sf::IntRect((currentFrame * 21)+3, 14, 18, 30));
+            clock.restart();
+        }
+    }
 private:
     sf::RectangleShape shape;
     sf::Sprite sprite;
