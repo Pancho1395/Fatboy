@@ -45,12 +45,14 @@ public:
         srand(time(NULL));
         for (int i = 0; i < filas; i++) {
             for (int j = 0; j < columnas; j++) {
-                if ((i == 0 && j == 0) || (i == 0 && j == 1) || (i == 1 && j == 0)) {
+                // Áreas libres para el jugador 1 y jugador 2
+                if ((i == 0 && j == 0) || (i == 0 && j == 1) || (i == 1 && j == 0) || // Área libre jugador 1
+                    (i == 12 && j == 10) || (i == 12 && j == 9) || (i == 11 && j == 10)) { // Área libre jugador 2
                     matriz[i][j] = 0;
                 } else if (i % 2 == 1 && j % 2 == 1) {
-                    matriz[i][j] = 1;
+                    matriz[i][j] = 1; // Bloques sólidos
                 } else {
-                    matriz[i][j] = (rand() % 2) ? 3 : 0;
+                    matriz[i][j] = (rand() % 2) ? 3 : 0; // Bloques destructibles o vacíos
                 }
             }
         }

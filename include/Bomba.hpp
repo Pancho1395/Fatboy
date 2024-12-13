@@ -1,11 +1,10 @@
-
 #ifndef BOMBA_HPP
 #define BOMBA_HPP
 
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <iostream>
-#include "Mapa.hpp"
+#include <Mapa.hpp>
 
 class Bomba {
 public:
@@ -19,6 +18,13 @@ public:
         sprite.setPosition(position);
         sprite.setScale(2, 2);
 
+        // Cargar textura de la explosión
+        if (!explosionTexture.loadFromFile("assets/images/explosion.png")) {
+            std::cerr << "Error: No se pudo cargar la textura de la explosión" << std::endl;
+        } else {
+            std::cout << "Textura de explosión cargada correctamente." << std::endl;
+        }
+
         // Inicializar estados y temporizadores
         explosionTimer.restart();
         exploded = false;
@@ -26,11 +32,12 @@ public:
         explosionDuration = 1.0f; // Duración de la explosión en segundos
     }
 
-    void update(Mapa &map) {
+    void update(Mapa &map, sf::Sprite &sprite) {
+        // Verificar si la bomba ha explotado
         if (!exploded && explosionTimer.getElapsedTime().asSeconds() >= 3.0f) {
             exploded = true;
-            generateExplosion(map); // Generar la explosión
-            explosionTimer.restart(); // Reiniciar temporizador para la duración de la explosión
+            generateExplosion(map, sprite); // Generar la explosión con colisión del sprite
+            explosionTimer.restart();       // Reiniciar temporizador para la duración de la explosión
         }
 
         // Finalizar la explosión después de 1 segundo
@@ -46,6 +53,7 @@ public:
         } else if (!explosionFinished) {
             for (auto &explosion : explosions) {
                 window.draw(explosion); // Dibujar las explosiones
+                std::cout << "Dibujando explosión en: " << explosion.getPosition().x << ", " << explosion.getPosition().y << std::endl;
             }
         }
     }
@@ -54,27 +62,39 @@ public:
         return explosionFinished; // Verificar si la explosión ha terminado
     }
 
+    bool isDead() {
+        return losVida;
+    }
+
+    const std::vector<sf::Sprite> &getExplosions() const {
+        return explosions; // Método público para acceder a las explosiones
+    }
+
 private:
     sf::Sprite sprite;
     sf::Texture texture;
+    sf::Texture explosionTexture;
     sf::Clock explosionTimer;
     float explosionDuration;
     bool exploded;
     bool explosionFinished;
-    std::vector<sf::RectangleShape> explosions;
+    bool losVida;
+    std::vector<sf::Sprite> explosions;
 
-    void generateExplosion(Mapa &map) {
+    void generateExplosion(Mapa &map, sf::Sprite &personaje) {
         sf::Vector2f size(64, 64);
 
         // Crear explosiones en direcciones cardinales
         for (int i = -1; i <= 1; ++i) {
             for (int j = -1; j <= 1; ++j) {
                 if (i == 0 || j == 0) { // Evitar diagonales, solo direcciones cardinales
-                    sf::RectangleShape explosion(size);
-                    explosion.setFillColor(sf::Color::Yellow); // Color amarillo para la explosión
+                    sf::Sprite explosion;
+                    explosion.setTexture(explosionTexture);
+                    explosion.setScale(2, 2); // Escalar la textura
                     explosion.setPosition(sprite.getPosition().x + i * size.x,
                                           sprite.getPosition().y + j * size.y);
                     explosions.push_back(explosion);
+                    std::cout << "Generando explosión en: " << explosion.getPosition().x << ", " << explosion.getPosition().y << std::endl;
 
                     // Verificar y destruir bloques en el mapa
                     int x = (sprite.getPosition().x + i * size.x - 128) / 64;
@@ -90,3 +110,4 @@ private:
 };
 
 #endif // BOMBA_HPP
+

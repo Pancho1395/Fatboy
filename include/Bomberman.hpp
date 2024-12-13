@@ -22,6 +22,15 @@ public:
         sprite.setPosition(position);
         sprite.setScale(3, 3);
     }
+    void lostLife() {
+    
+        vidas--; // Reducir una vida
+    sprite.setPosition(-100, -100); // Posición temporal fuera de la pantalla
+
+    // Volver a la posición inicial después del retraso
+    sprite.setPosition(128, 40);
+
+    }
 
     void move(float offsetX, float offsetY) {
         sprite.move(offsetX, offsetY);
@@ -72,7 +81,7 @@ public:
 
         // Colisiones con los bordes
         if (x_centro < left_bound + 18 || x_centro > right_bound - 18 || 
-            y_abajo < top_bound + 20 || y_abajo > bottom_bound) {
+            y_abajo < top_bound + 20 || y_abajo > bottom_bound + 20) {
             return true;
         }
 
@@ -92,6 +101,9 @@ public:
 
         return false;
     }
+    sf::Sprite& getSprite() {
+    return sprite;
+}
 
 private:
     sf::RectangleShape shape;
@@ -100,7 +112,7 @@ private:
     sf::Clock clock;
     int currentFrame = 0;
     float frameTime = 0.1f;
-
+    int vidas;
     void updateAnimation(int startX, int frameCount, int yOffset) {
         if (clock.getElapsedTime().asSeconds() >= frameTime) {
             currentFrame = (currentFrame + 1) % frameCount;
