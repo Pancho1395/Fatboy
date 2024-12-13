@@ -22,16 +22,7 @@ public:
         sprite.setPosition(position);
         sprite.setScale(3, 3);
     }
-    void lostLife() {
     
-        vidas--; // Reducir una vida
-    sprite.setPosition(-100, -100); // Posición temporal fuera de la pantalla
-
-    // Volver a la posición inicial después del retraso
-    sprite.setPosition(128, 40);
-
-    }
-
     void move(float offsetX, float offsetY) {
         sprite.move(offsetX, offsetY);
         shape.move(offsetX, offsetY);
@@ -43,10 +34,10 @@ public:
 
         // Redondear a la celda más cercana
         float centeredX = std::round(position.x / cellSize) * cellSize;
-        float centeredY = std::round(position.y / cellSize) * cellSize;
+        float centeredY = std::round((position.y + 40) / cellSize) * cellSize;
 
         // Colocar la bomba en la celda centralizada
-        bombs.emplace_back(sf::Vector2f(centeredX, centeredY));
+        bombs.emplace_back(sf::Vector2f(centeredX, centeredY ));
     }
 
     void draw(sf::RenderWindow &window) {
@@ -62,16 +53,32 @@ public:
         updateAnimation(248, 6, 60); // Animación derecha
     }
 
-    void up() {
-        updateAnimation(366, 6, 60); // Animación hacia arriba
+     void up(){
+        // Actualizar el frame de la animación
+        if (clock.getElapsedTime().asSeconds() >= frameTime)
+        {
+            currentFrame = (currentFrame + 1) % 6;
+            sprite.setTextureRect(sf::IntRect((currentFrame * 21)+366, 60, 18, 30));
+            clock.restart();
+        }
     }
-
-    void down() {
-        updateAnimation(3, 6, 60); // Animación hacia abajo
+    void down(){
+        // Actualizar el frame de la animación
+        if (clock.getElapsedTime().asSeconds() >= frameTime)
+        {
+            currentFrame = (currentFrame + 1) % 6;
+            sprite.setTextureRect(sf::IntRect((currentFrame * 21)+3, 60, 18, 30));
+            clock.restart();
+        }
     }
-
-    void stayd() {
-        updateAnimation(3, 3, 14); // Animación quieto
+     void stayd(){
+        // Actualizar el frame de la animación
+        if (clock.getElapsedTime().asSeconds() >= frameTime)
+        {
+            currentFrame = (currentFrame + 1) % 3;
+            sprite.setTextureRect(sf::IntRect((currentFrame * 21)+3, 14, 18, 30));
+            clock.restart();
+        }
     }
 
     bool checkBlockCollision(int** matriz, int rows, int cols, float left_bound, float top_bound, float right_bound, float bottom_bound) {
@@ -81,7 +88,7 @@ public:
 
         // Colisiones con los bordes
         if (x_centro < left_bound + 18 || x_centro > right_bound - 18 || 
-            y_abajo < top_bound + 20 || y_abajo > bottom_bound + 20) {
+            y_abajo < top_bound + 20 || y_abajo > bottom_bound ) {
             return true;
         }
 
@@ -90,8 +97,8 @@ public:
             for (int j = 0; j < cols; j++) {
                 float bloqueX = 128 + i * 64;
                 float bloqueY = 64 + j * 64;
-                if (x_centro >= bloqueX - 24 && x_centro < bloqueX + 64 + 24 &&
-                    y_abajo >= bloqueY && y_abajo < bloqueY + 64) {
+                if (x_centro >= bloqueX - 20 && x_centro < bloqueX + 64 + 20 &&
+                    y_abajo >= bloqueY +4 && y_abajo < bloqueY + 64 + 24) {
                     if (matriz[i][j] == 1 || matriz[i][j] == 3) {
                         return true;
                     }

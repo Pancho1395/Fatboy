@@ -46,9 +46,18 @@ public:
             explosionFinished = true; // Marcar como finalizada
         }
     }
-
+    void anima(){
+        // Actualizar el frame de la animación
+        if (clock.getElapsedTime().asSeconds() >= frameTime)
+        {
+            currentFrame = (currentFrame + 1) % 3;
+            sprite.setTextureRect(sf::IntRect(currentFrame * 32, 0, 32, 32));
+            clock.restart();
+        }
+    }
     void draw(sf::RenderWindow &window) {
         if (!exploded) {
+            anima();
             window.draw(sprite); // Dibujar la bomba
         } else if (!explosionFinished) {
             for (auto &explosion : explosions) {
@@ -80,6 +89,9 @@ private:
     bool explosionFinished;
     bool losVida;
     std::vector<sf::Sprite> explosions;
+    sf::Clock clock;
+    int currentFrame = 0;
+    float frameTime = 0.1f;
 
     void generateExplosion(Mapa &map, sf::Sprite &personaje) {
         sf::Vector2f size(64, 64);

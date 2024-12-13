@@ -4,16 +4,18 @@
 #include <Mapa.hpp>
 #include <Bomba.hpp>
 #include <vector>
+//#include <PatallaGanadora.hpp>
 
 double velocidad = 0.1;
 
 int main() {
+    int puntosJ1=0, puntosJ2=0;
     float left = 128.0f;
     float top = 64.0f;
     float right = 960.0f;
     float bottom = 768.0f;
     sf::RenderWindow window(sf::VideoMode(1084, 828), "Fatboy");
-
+    //PantallaGanadora pant;
     Bomberman man1(sf::Vector2f(128, 40), sf::Color::Red);
     Bomberman man2(sf::Vector2f(896, 640), sf::Color::Blue); // Jugador 2 un bloque más arriba
 
@@ -123,6 +125,7 @@ int main() {
             for (const auto &explosion : bomb.getExplosions()) {
                 if (explosion.getGlobalBounds().intersects(spriteBounds)) {
                     man1.move(128 - man1.getSprite().getPosition().x, 40 - man1.getSprite().getPosition().y); // Reiniciar posición jugador 1
+                    puntosJ2++;
                     break;
                 }
             }
@@ -137,6 +140,7 @@ int main() {
             for (const auto &explosion : bomb.getExplosions()) {
                 if (explosion.getGlobalBounds().intersects(spriteBounds)) {
                     man1.move(128 - man1.getSprite().getPosition().x, 40 - man1.getSprite().getPosition().y); // Reiniciar posición jugador 1
+                    puntosJ2++;
                     break;
                 }
             }
@@ -152,6 +156,7 @@ int main() {
             for (const auto &explosion : bomb.getExplosions()) {
                 if (explosion.getGlobalBounds().intersects(spriteBounds)) {
                     man2.move(896 - man2.getSprite().getPosition().x, 640 - man2.getSprite().getPosition().y); // Reiniciar posición jugador 2
+                    puntosJ1++;
                     break;
                 }
             }
@@ -166,11 +171,22 @@ int main() {
             for (const auto &explosion : bomb.getExplosions()) {
                 if (explosion.getGlobalBounds().intersects(spriteBounds)) {
                     man2.move(896 - man2.getSprite().getPosition().x, 640 - man2.getSprite().getPosition().y); // Reiniciar posición jugador 2
+                    puntosJ1++;
                     break;
                 }
             }
         }
 
+        if(puntosJ1>=10){
+           // pant.cargarImagen1();
+            //pant.draw(window);
+            window.close();
+        }
+         if(puntosJ2>=10){
+            //pant.cargarImagen2();
+            //pant.draw(window);
+            window.close();
+        }
         // Limpiar y dibujar en la ventana
         window.clear();
         map.draw(window);
